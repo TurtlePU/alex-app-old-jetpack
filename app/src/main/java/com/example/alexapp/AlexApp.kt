@@ -11,12 +11,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
-fun AlexApp() {
+fun AlexApp(checkCredentials: suspend (Credentials) -> String?) {
   AlexAppTheme {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = "auth") {
-        composable("auth") { Auth() }
+        composable("auth") {
+          Auth(checkCredentials) { navController.navigate("rate/$it") }
+        }
       }
     }
   }
