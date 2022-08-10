@@ -9,13 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.PagingData
 import com.example.alexapp.Credentials.Companion.credentials
 import com.example.alexapp.ui.theme.AlexAppTheme
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AlexApp(
   checkCredentials: suspend (Credentials) -> String?,
-  performances: (Credentials) -> List<Performance>
+  performances: (Credentials) -> Flow<PagingData<Performance>>
 ) {
   AlexAppTheme {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
