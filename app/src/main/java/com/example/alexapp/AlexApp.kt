@@ -24,11 +24,11 @@ fun AlexApp(
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
-          Auth(checkCredentials) { navController.navigate("rate/$it") }
+          Auth(checkCredentials) { navController.navigate("performances/$it") }
         }
-        composable("rate/{host}:{login}:{token}") {
+        composable("performances/{host}:{login}:{token}") {
           val credentials = it.arguments?.credentials ?: throw MissingArguments()
-          Rate(performances(credentials))
+          Performances(performances(credentials))
         }
       }
     }
