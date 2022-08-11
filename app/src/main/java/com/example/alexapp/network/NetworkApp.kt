@@ -8,7 +8,13 @@ import com.example.alexapp.domains.Performances.Rating
 import kotlinx.coroutines.flow.Flow
 
 class NetworkApp(private val ratings: MutableMap<Performance, Rating>) : AlexApp {
+  override val initialCredentials: Credentials get() = TODO("Not yet implemented")
+
   override suspend fun checkCredentials(credentials: Credentials): String? {
+    TODO("Not yet implemented")
+  }
+
+  override suspend fun saveCredentials(credentials: Credentials) {
     TODO("Not yet implemented")
   }
 

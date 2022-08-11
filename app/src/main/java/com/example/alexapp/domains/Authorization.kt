@@ -3,15 +3,18 @@ package com.example.alexapp.domains
 interface Authorization {
   data class Credentials(val host: String, val login: String, val token: String)
 
+  val initial: Credentials?
   suspend fun check(credentials: Credentials): String?
-  fun authorizeWith(credentials: Credentials)
+  suspend fun authorizeWith(credentials: Credentials)
 
   object Example : Authorization {
-    override suspend fun check(credentials: Credentials) =
-      if (credentials.login != "Android") "Expected login 'Android'" else null
+    override val initial get() = Credentials("https://example.com", "Android", "token")
 
-    override fun authorizeWith(credentials: Credentials) {
-      assert(credentials.login == "Android")
+    override suspend fun check(credentials: Credentials) =
+      if (credentials.login != initial.login) "Expected login '${initial.login}'" else null
+
+    override suspend fun authorizeWith(credentials: Credentials) {
+      assert(credentials.login == initial.login)
     }
   }
 }
