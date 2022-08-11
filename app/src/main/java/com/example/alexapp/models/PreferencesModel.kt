@@ -4,18 +4,18 @@ import Performance
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.models.RatingModel.Rating
+import com.example.alexapp.models.RestoreModel.Rating
 import kotlinx.coroutines.flow.map
 
 class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel {
-  override val initialCredentials get() = dataStore.data.map(Companion::credentials)
-  override suspend fun authorizeWith(credentials: Credentials) {
-    dataStore.edit { credentials.writePreferences(it) }
+  override val initials get() = dataStore.data.map(Companion::credentials)
+  override suspend fun remember(credentials: Credentials) {
+    dataStore.edit { credentials.remember(it) }
   }
 
   override fun restore(performance: Performance) = dataStore.data.map { performance.rating(it) }
-  override suspend fun saveRating(performance: Performance, rating: Rating) {
-    dataStore.edit { performance.writeRating(rating, it) }
+  override suspend fun rate(`for`: Performance, rating: Rating) {
+    dataStore.edit { `for`.remember(rating, it) }
   }
 
   companion object {
@@ -38,13 +38,13 @@ class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel
       return Rating(grade, comment)
     }
 
-    fun Credentials.writePreferences(pref: MutablePreferences) {
+    fun Credentials.remember(pref: MutablePreferences) {
       pref[HOST] = host
       pref[LOGIN] = login
       pref[TOKEN] = token
     }
 
-    fun Performance.writeRating(rating: Rating, pref: MutablePreferences) {
+    fun Performance.remember(rating: Rating, pref: MutablePreferences) {
       pref[GRADE] = rating.grade
       rating.comment?.let { pref[COMMENT] = it }
     }

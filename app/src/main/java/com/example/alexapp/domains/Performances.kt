@@ -3,7 +3,7 @@ package com.example.alexapp.domains
 import Performance
 import androidx.paging.*
 import com.example.alexapp.models.RatingModel
-import com.example.alexapp.models.RatingModel.Rating
+import com.example.alexapp.models.RestoreModel.Rating
 import kotlinx.coroutines.flow.Flow
 
 interface Performances : RatingModel {

@@ -1,19 +1,14 @@
 package com.example.alexapp.models
 
 import Performance
-import kotlinx.coroutines.flow.Flow
+import com.example.alexapp.models.RestoreModel.Rating
 import kotlinx.coroutines.flow.flowOf
 
-interface RatingModel {
-  data class Rating(val grade: Double, val comment: String?)
-
-  fun restore(performance: Performance): Flow<Rating?>
-  suspend fun saveRating(performance: Performance, rating: Rating)
+interface RatingModel : RestoreModel {
+  suspend fun rate(`for`: Performance, rating: Rating)
 
   open class Example(private val state: MutableMap<Performance, Rating>) : RatingModel {
     override fun restore(performance: Performance) = flowOf(state[performance])
-    override suspend fun saveRating(performance: Performance, rating: Rating) {
-      state[performance] = rating
-    }
+    override suspend fun rate(`for`: Performance, rating: Rating) { state[`for`] = rating }
   }
 }

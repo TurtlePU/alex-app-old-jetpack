@@ -6,7 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.models.RatingModel.Rating
+import com.example.alexapp.models.RestoreModel.Rating
 
 object NetworkDriver : AppDriver {
   override fun flow(host: String) = Pager(PagingConfig(100)) {
@@ -25,7 +25,7 @@ object NetworkDriver : AppDriver {
     TODO("Not yet implemented")
   }
 
-  override suspend fun checkCredentials(credentials: Credentials): String? {
+  override suspend fun authorize(credentials: Credentials): String? {
     TODO("Not yet implemented")
   }
 }

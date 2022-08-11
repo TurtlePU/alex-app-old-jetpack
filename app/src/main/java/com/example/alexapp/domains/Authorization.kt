@@ -7,10 +7,9 @@ import com.example.alexapp.models.AuthorizationModel.Credentials
 interface Authorization : AuthorizationModel, AuthorizationDriver {
   object Example : Authorization {
     private val model = AuthorizationModel.Example
-    override val initialCredentials get() = model.initialCredentials
-    override suspend fun authorizeWith(credentials: Credentials) = model.authorizeWith(credentials)
-    override suspend fun checkCredentials(credentials: Credentials) =
-      if (credentials.login != model.constant.login) "Expected login '${model.constant.login}'"
-      else null
+    override val initials get() = model.initials
+    override suspend fun remember(credentials: Credentials) = model.remember(credentials)
+    override suspend fun authorize(credentials: Credentials) =
+      if (credentials.login != model.login) "Expected login '${model.login}'" else null
   }
 }

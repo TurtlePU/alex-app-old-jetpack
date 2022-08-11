@@ -3,7 +3,7 @@ package com.example.alexapp.drivers
 import Performance
 import androidx.paging.PagingData
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.models.RatingModel.Rating
+import com.example.alexapp.models.RestoreModel.Rating
 import kotlinx.coroutines.flow.Flow
 
 interface AppDriver : AuthorizationDriver {
