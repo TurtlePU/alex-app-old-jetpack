@@ -1,15 +1,13 @@
 package com.example.alexapp.domains
 
 import Performance
-import androidx.paging.PagingData
+import com.example.alexapp.drivers.AppDriver
 import com.example.alexapp.models.AuthorizationModel.Credentials
 import com.example.alexapp.models.RatingModel.Rating
 import kotlinx.coroutines.flow.Flow
 
-interface App : Authorization {
-  fun flow(host: String): Flow<PagingData<Performance>>
+interface App : Authorization, AppDriver {
   fun restoreRating(performance: Performance): Flow<Rating?>
-  suspend fun rate(credentials: Credentials, performance: Performance, rating: Rating)
 
   class OverloadedAuth(private val app: App, private val onSuccess: Credentials.() -> Unit) :
     Authorization {
