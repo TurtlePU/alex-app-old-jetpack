@@ -15,5 +15,5 @@ fun PerformancesScreen(performances: Performances) {
 @Preview
 @Composable
 fun PerformancesPreview() {
-  PerformancesScreen(Performances.example(remember { mutableStateMapOf() }))
+  PerformancesScreen(Performances.Example(remember { mutableStateMapOf() }))
 }

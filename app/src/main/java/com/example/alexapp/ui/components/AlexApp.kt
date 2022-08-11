@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.alexapp.data.AuthorizationDriver
 import com.example.alexapp.domains.AlexApp
+import com.example.alexapp.domains.AlexApp.OverloadedAuth
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
@@ -26,14 +27,14 @@ fun AlexAppLayout(app: AlexApp) {
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
           AuthorizationScreen(
-            app.authorization {
+            OverloadedAuth(app) {
               navController.navigate("performances/$host:$login:$token")
             }
           )
         }
         composable("performances/{host}:{login}:{token}") {
           PerformancesScreen(
-            app.performances(it.arguments!!.run {
+            AlexApp.CredentialPerformances(app, it.arguments!!.run {
               AuthorizationDriver.Credentials(
                 getString("host")!!,
                 getString("login")!!,
@@ -50,5 +51,5 @@ fun AlexAppLayout(app: AlexApp) {
 @Preview
 @Composable
 fun AlexAppPreview() {
-  AlexAppLayout(AlexApp.example(remember { mutableStateMapOf() }))
+  AlexAppLayout(AlexApp.Example(remember { mutableStateMapOf() }))
 }

@@ -11,44 +11,36 @@ interface AlexApp : Authorization {
   fun restoreRating(performance: Performance): Flow<Rating?>
   suspend fun rate(credentials: Credentials, performance: Performance, rating: Rating)
 
-  fun authorization(onSuccess: Credentials.() -> Unit) = object : Authorization {
-    override val initialCredentials get() = this@AlexApp.initialCredentials
+  class OverloadedAuth(private val app: AlexApp, private val onSuccess: Credentials.() -> Unit) :
+    Authorization {
+    override val initialCredentials get() = app.initialCredentials
     override suspend fun authorizeWith(credentials: Credentials) {
-      this@AlexApp.authorizeWith(credentials)
+      app.authorizeWith(credentials)
       credentials.onSuccess()
     }
 
     override suspend fun checkCredentials(credentials: Credentials) =
-      this@AlexApp.checkCredentials(credentials)
+      app.checkCredentials(credentials)
   }
 
-  fun performances(credentials: Credentials) = object : Performances {
-    override val flow get() = flow(credentials.host)
-    override fun restore(performance: Performance) = restoreRating(performance)
+  class CredentialPerformances(private val app: AlexApp, private val credentials: Credentials) :
+    Performances {
+    override val flow get() = app.flow(credentials.host)
+    override fun restore(performance: Performance) = app.restoreRating(performance)
     override suspend fun saveRating(performance: Performance, rating: Rating) =
-      rate(credentials, performance, rating)
+      app.rate(credentials, performance, rating)
   }
 
-  companion object {
-    fun example(ratings: MutableMap<Performance, Rating>): AlexApp {
-      val auth = Authorization.Example
-      val performances = Performances.example(ratings)
-      return object : AlexApp {
-        override val initialCredentials get() = auth.initialCredentials
-        override suspend fun authorizeWith(credentials: Credentials) =
-          auth.authorizeWith(credentials)
+  class Example(ratings: MutableMap<Performance, Rating>) : AlexApp, Performances.Example(ratings) {
+    private val auth = Authorization.Example
+    override val initialCredentials get() = auth.initialCredentials
+    override suspend fun authorizeWith(credentials: Credentials) = auth.authorizeWith(credentials)
+    override suspend fun checkCredentials(credentials: Credentials) =
+      auth.checkCredentials(credentials)
 
-        override suspend fun checkCredentials(credentials: Credentials) =
-          auth.checkCredentials(credentials)
-
-        override fun flow(host: String) = performances.flow
-        override fun restoreRating(performance: Performance) = performances.restore(performance)
-        override suspend fun rate(
-          credentials: Credentials,
-          performance: Performance,
-          rating: Rating
-        ) = performances.saveRating(performance, rating)
-      }
-    }
+    override fun flow(host: String) = flow
+    override fun restoreRating(performance: Performance) = restore(performance)
+    override suspend fun rate(credentials: Credentials, performance: Performance, rating: Rating) =
+      saveRating(performance, rating)
   }
 }
