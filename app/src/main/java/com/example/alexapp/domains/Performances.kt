@@ -1,7 +1,7 @@
 package com.example.alexapp.domains
 
 import Performance
-import androidx.paging.PagingData
+import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 
 interface Performances {
@@ -12,14 +12,24 @@ interface Performances {
   suspend fun rate(performance: Performance, rating: Rating)
 
   companion object {
-    fun example(ratings: MutableMap<Performance, Rating>) = object : Performances {
-      override val flow: Flow<PagingData<Performance>>
-        get() = TODO("Not yet implemented")
+    fun example(ratings: MutableMap<Performance, Rating>) =
+      object : Performances {
+        override val flow: Flow<PagingData<Performance>> get() = defaultPager.flow
+        override fun restore(performance: Performance) = ratings[performance]
+        override suspend fun rate(performance: Performance, rating: Rating) {
+          ratings[performance] = rating
+        }
+      }
 
-      override fun restore(performance: Performance) = ratings[performance]
+    val defaultPager = Pager(PagingConfig(100)) {
+      object : PagingSource<Int, Performance>() {
+        override fun getRefreshKey(state: PagingState<Int, Performance>): Int? {
+          TODO("Not yet implemented")
+        }
 
-      override suspend fun rate(performance: Performance, rating: Rating) {
-        ratings[performance] = rating
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
+          TODO("Not yet implemented")
+        }
       }
     }
   }

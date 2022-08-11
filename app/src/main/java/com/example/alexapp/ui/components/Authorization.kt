@@ -6,12 +6,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.alexapp.domains.Authorization
 
 @Composable
-fun Authorization.Layout() {
+fun AuthorizationScreen(authorization: Authorization) {
   Text("Hello, Android!")
 }
 
 @Composable
 @Preview
 fun AuthorizationPreview() {
-  Authorization.Example.Layout()
+  AuthorizationScreen(Authorization.Example)
 }

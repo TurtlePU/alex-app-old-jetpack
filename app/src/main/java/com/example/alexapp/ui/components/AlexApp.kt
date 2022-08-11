@@ -16,7 +16,7 @@ import com.example.alexapp.domains.Authorization
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
-fun AlexApp.Layout() {
+fun AlexAppLayout(app: AlexApp) {
   AlexAppTheme {
     Surface(
       modifier = Modifier.fillMaxSize(),
@@ -25,18 +25,22 @@ fun AlexApp.Layout() {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
-          authorization {
-            navController.navigate("performances/$host:$login:$token")
-          }.Layout()
+          AuthorizationScreen(
+            app.authorization {
+              navController.navigate("performances/$host:$login:$token")
+            }
+          )
         }
         composable("performances/{host}:{login}:{token}") {
-          performances(it.arguments!!.run {
-            Authorization.Credentials(
-              getString("host")!!,
-              getString("login")!!,
-              getString("token")!!,
-            )
-          }).Layout()
+          PerformancesScreen(
+            app.performances(it.arguments!!.run {
+              Authorization.Credentials(
+                getString("host")!!,
+                getString("login")!!,
+                getString("token")!!,
+              )
+            })
+          )
         }
       }
     }
@@ -46,5 +50,5 @@ fun AlexApp.Layout() {
 @Preview
 @Composable
 fun AlexAppPreview() {
-  AlexApp.example(remember { mutableStateMapOf() }).Layout()
+  AlexAppLayout(AlexApp.example(remember { mutableStateMapOf() }))
 }
