@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.alexapp.ui.components.AlexAppLayout
+import com.example.alexapp.domains.NetworkApp
+import com.example.alexapp.models.PreferencesModel
+import com.example.alexapp.ui.AppLayout
 
 class MainActivity : ComponentActivity() {
   companion object {
@@ -14,6 +16,6 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { AlexAppLayout(NetworkApp(PreferencesDriver(dataStore))) }
+    setContent { AppLayout(NetworkApp(PreferencesModel(dataStore))) }
   }
 }

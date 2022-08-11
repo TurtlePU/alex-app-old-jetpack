@@ -2,16 +2,16 @@ package com.example.alexapp.domains
 
 import Performance
 import androidx.paging.PagingData
-import com.example.alexapp.data.AuthorizationDriver.Credentials
-import com.example.alexapp.data.RatingDriver.Rating
+import com.example.alexapp.models.AuthorizationModel.Credentials
+import com.example.alexapp.models.RatingModel.Rating
 import kotlinx.coroutines.flow.Flow
 
-interface AlexApp : Authorization {
+interface App : Authorization {
   fun flow(host: String): Flow<PagingData<Performance>>
   fun restoreRating(performance: Performance): Flow<Rating?>
   suspend fun rate(credentials: Credentials, performance: Performance, rating: Rating)
 
-  class OverloadedAuth(private val app: AlexApp, private val onSuccess: Credentials.() -> Unit) :
+  class OverloadedAuth(private val app: App, private val onSuccess: Credentials.() -> Unit) :
     Authorization {
     override val initialCredentials get() = app.initialCredentials
     override suspend fun authorizeWith(credentials: Credentials) {
@@ -23,7 +23,7 @@ interface AlexApp : Authorization {
       app.checkCredentials(credentials)
   }
 
-  class CredentialPerformances(private val app: AlexApp, private val credentials: Credentials) :
+  class CredentialPerformances(private val app: App, private val credentials: Credentials) :
     Performances {
     override val flow get() = app.flow(credentials.host)
     override fun restore(performance: Performance) = app.restoreRating(performance)
@@ -31,7 +31,7 @@ interface AlexApp : Authorization {
       app.rate(credentials, performance, rating)
   }
 
-  class Example(ratings: MutableMap<Performance, Rating>) : AlexApp, Performances.Example(ratings) {
+  class Example(ratings: MutableMap<Performance, Rating>) : App, Performances.Example(ratings) {
     private val auth = Authorization.Example
     override val initialCredentials get() = auth.initialCredentials
     override suspend fun authorizeWith(credentials: Credentials) = auth.authorizeWith(credentials)

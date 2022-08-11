@@ -1,16 +1,15 @@
-package com.example.alexapp
+package com.example.alexapp.domains
 
 import Performance
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.alexapp.data.AppDriver
-import com.example.alexapp.data.AuthorizationDriver.Credentials
-import com.example.alexapp.data.RatingDriver.Rating
-import com.example.alexapp.domains.AlexApp
+import com.example.alexapp.models.AppModel
+import com.example.alexapp.models.AuthorizationModel.Credentials
+import com.example.alexapp.models.RatingModel.Rating
 
-class NetworkApp(private val driver: AppDriver) : AlexApp {
+class NetworkApp(private val driver: AppModel) : App {
   override fun flow(host: String) = Pager(PagingConfig(100)) {
     object : PagingSource<Int, Performance>() {
       override fun getRefreshKey(state: PagingState<Int, Performance>): Int? {

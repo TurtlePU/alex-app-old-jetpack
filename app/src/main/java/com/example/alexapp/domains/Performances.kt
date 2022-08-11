@@ -2,14 +2,14 @@ package com.example.alexapp.domains
 
 import Performance
 import androidx.paging.*
-import com.example.alexapp.data.RatingDriver
-import com.example.alexapp.data.RatingDriver.Rating
+import com.example.alexapp.models.RatingModel
+import com.example.alexapp.models.RatingModel.Rating
 import kotlinx.coroutines.flow.Flow
 
-interface Performances : RatingDriver {
+interface Performances : RatingModel {
   val flow: Flow<PagingData<Performance>>
 
-  open class Example(map: MutableMap<Performance, Rating>) : RatingDriver.Example(map), Performances {
+  open class Example(m: MutableMap<Performance, Rating>) : RatingModel.Example(m), Performances {
     override val flow get() = Pager(PagingConfig(100)) { DefaultSource }.flow
 
     object DefaultSource : PagingSource<Int, Performance>() {

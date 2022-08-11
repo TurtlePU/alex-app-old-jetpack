@@ -1,4 +1,4 @@
-package com.example.alexapp.ui.components
+package com.example.alexapp.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -11,13 +11,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.alexapp.data.AuthorizationDriver
-import com.example.alexapp.domains.AlexApp
-import com.example.alexapp.domains.AlexApp.OverloadedAuth
+import com.example.alexapp.models.AuthorizationModel
+import com.example.alexapp.domains.App
+import com.example.alexapp.domains.App.OverloadedAuth
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
-fun AlexAppLayout(app: AlexApp) {
+fun AppLayout(app: App) {
   AlexAppTheme {
     Surface(
       modifier = Modifier.fillMaxSize(),
@@ -34,8 +34,8 @@ fun AlexAppLayout(app: AlexApp) {
         }
         composable("performances/{host}:{login}:{token}") {
           PerformancesScreen(
-            AlexApp.CredentialPerformances(app, it.arguments!!.run {
-              AuthorizationDriver.Credentials(
+            App.CredentialPerformances(app, it.arguments!!.run {
+              AuthorizationModel.Credentials(
                 getString("host")!!,
                 getString("login")!!,
                 getString("token")!!,
@@ -50,6 +50,6 @@ fun AlexAppLayout(app: AlexApp) {
 
 @Preview
 @Composable
-fun AlexAppPreview() {
-  AlexAppLayout(AlexApp.Example(remember { mutableStateMapOf() }))
+fun AppPreview() {
+  AppLayout(App.Example(remember { mutableStateMapOf() }))
 }

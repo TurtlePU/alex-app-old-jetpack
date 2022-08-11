@@ -1,13 +1,13 @@
 package com.example.alexapp.domains
 
-import com.example.alexapp.data.AuthorizationDriver
-import com.example.alexapp.data.AuthorizationDriver.Credentials
+import com.example.alexapp.models.AuthorizationModel
+import com.example.alexapp.models.AuthorizationModel.Credentials
 
-interface Authorization : AuthorizationDriver {
+interface Authorization : AuthorizationModel {
   suspend fun checkCredentials(credentials: Credentials): String?
 
   object Example : Authorization {
-    private val driver = AuthorizationDriver.Example
+    private val driver = AuthorizationModel.Example
     override val initialCredentials get() = driver.initialCredentials
     override suspend fun authorizeWith(credentials: Credentials) = driver.authorizeWith(credentials)
     override suspend fun checkCredentials(credentials: Credentials) =

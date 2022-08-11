@@ -1,15 +1,14 @@
-package com.example.alexapp
+package com.example.alexapp.models
 
 import Performance
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import com.example.alexapp.data.AppDriver
-import com.example.alexapp.data.AuthorizationDriver.Credentials
-import com.example.alexapp.data.RatingDriver.Rating
+import com.example.alexapp.models.AuthorizationModel.Credentials
+import com.example.alexapp.models.RatingModel.Rating
 import kotlinx.coroutines.flow.map
 
-class PreferencesDriver(private val dataStore: DataStore<Preferences>) : AppDriver {
-  override val initialCredentials get() = dataStore.data.map(::credentials)
+class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel {
+  override val initialCredentials get() = dataStore.data.map(Companion::credentials)
   override suspend fun authorizeWith(credentials: Credentials) {
     dataStore.edit { credentials.writePreferences(it) }
   }

@@ -1,4 +1,4 @@
-package com.example.alexapp.ui.components
+package com.example.alexapp.ui
 
 import Performance
 import androidx.compose.runtime.*
