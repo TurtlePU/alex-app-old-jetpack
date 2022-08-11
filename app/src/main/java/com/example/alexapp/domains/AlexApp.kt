@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AlexApp : Authorization {
   fun flow(host: String): Flow<PagingData<Performance>>
-  fun restoreRating(performance: Performance): Rating?
+  fun restoreRating(performance: Performance): Flow<Rating?>
   suspend fun rate(credentials: Credentials, performance: Performance, rating: Rating)
 
   fun authorization(onSuccess: Credentials.() -> Unit) = object : Authorization {

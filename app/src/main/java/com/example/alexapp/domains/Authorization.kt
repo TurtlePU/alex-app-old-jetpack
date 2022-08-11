@@ -7,13 +7,11 @@ interface Authorization : AuthorizationDriver {
   suspend fun checkCredentials(credentials: Credentials): String?
 
   object Example : Authorization {
+    private val driver = AuthorizationDriver.Example
     override val initialCredentials get() = driver.initialCredentials
     override suspend fun authorizeWith(credentials: Credentials) = driver.authorizeWith(credentials)
     override suspend fun checkCredentials(credentials: Credentials) =
-      if (credentials.login != initialCredentials.login) "Expected login '${initialCredentials.login}'" else null
-  }
-
-  companion object {
-    val driver = AuthorizationDriver.Example
+      if (credentials.login != driver.constant.login) "Expected login '${driver.constant.login}'"
+      else null
   }
 }
