@@ -11,8 +11,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.alexapp.data.AuthorizationDriver
 import com.example.alexapp.domains.AlexApp
-import com.example.alexapp.domains.Authorization
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
@@ -34,7 +34,7 @@ fun AlexAppLayout(app: AlexApp) {
         composable("performances/{host}:{login}:{token}") {
           PerformancesScreen(
             app.performances(it.arguments!!.run {
-              Authorization.Credentials(
+              AuthorizationDriver.Credentials(
                 getString("host")!!,
                 getString("login")!!,
                 getString("token")!!,

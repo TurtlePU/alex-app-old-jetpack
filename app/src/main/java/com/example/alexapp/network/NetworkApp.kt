@@ -2,9 +2,9 @@ package com.example.alexapp.network
 
 import Performance
 import androidx.paging.PagingData
+import com.example.alexapp.data.AuthorizationDriver.Credentials
 import com.example.alexapp.domains.AlexApp
-import com.example.alexapp.domains.Authorization.Credentials
-import com.example.alexapp.domains.Performances.Rating
+import com.example.alexapp.data.RatingDriver.Rating
 import kotlinx.coroutines.flow.Flow
 
 class NetworkApp(private val ratings: MutableMap<Performance, Rating>) : AlexApp {
@@ -14,7 +14,7 @@ class NetworkApp(private val ratings: MutableMap<Performance, Rating>) : AlexApp
     TODO("Not yet implemented")
   }
 
-  override suspend fun saveCredentials(credentials: Credentials) {
+  override suspend fun authorizeWith(credentials: Credentials) {
     TODO("Not yet implemented")
   }
 
