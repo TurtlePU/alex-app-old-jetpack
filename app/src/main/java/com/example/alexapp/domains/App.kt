@@ -8,22 +8,6 @@ import com.example.alexapp.models.RestoreModel
 import com.example.alexapp.models.RestoreModel.Rating
 
 interface App : AppDriver, AuthorizationModel, RestoreModel {
-  class OverloadedAuth(private val app: App, private val onSuccess: Credentials.() -> Unit) :
-    Authorization {
-    override val initials get() = app.initials
-    override suspend fun authorize(credentials: Credentials) = app.authorize(credentials)
-    override suspend fun remember(credentials: Credentials) {
-      app.remember(credentials)
-      credentials.onSuccess()
-    }
-  }
-
-  class CredentialPerformances(private val app: App, private val c: Credentials) : Performances {
-    override val flow get() = app.flow(c.host)
-    override fun restore(performance: Performance) = app.restore(performance)
-    override suspend fun rate(`for`: Performance, rating: Rating) = app.rate(c, `for`, rating)
-  }
-
   class Example(ratings: MutableMap<Performance, Rating>) : App {
     private val auth = Authorization.Example
     private val perf = Performances.Example(ratings)

@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { AppLayout(CompositeApp(PreferencesModel(dataStore), NetworkDriver)) }
+    val app = CompositeApp(PreferencesModel(dataStore), NetworkDriver)
+    setContent { AppLayout(app) }
   }
 }
