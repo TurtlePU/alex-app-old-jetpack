@@ -16,6 +16,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 data class Rating(val grade: Double, val comment: String?)
 
@@ -78,12 +79,14 @@ fun PerformancesPreview() {
       override suspend fun rate(performance: Performance, rating: Rating) {}
       override val performances = Pager(PagingConfig(100)) {
         object : PagingSource<Int, Performance>() {
-          override fun getRefreshKey(state: PagingState<Int, Performance>): Int? {
-            TODO("Not yet implemented")
+          override fun getRefreshKey(state: PagingState<Int, Performance>) = state.run {
+            ((anchorPosition ?: 0) - config.initialLoadSize / 2).coerceAtLeast(0)
           }
 
           override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
-            TODO("Not yet implemented")
+            val choir = Participant("Choir #${Random.nextInt()}}", "Soviet songs", "100")
+            val result = Performance(params.key ?: 0, choir, "Katusha #${Random.nextInt()}")
+            return LoadResult.Page(listOf(result), null, null)
           }
         }
       }.flow
