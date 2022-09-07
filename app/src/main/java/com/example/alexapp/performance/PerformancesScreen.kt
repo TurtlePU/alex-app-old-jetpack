@@ -41,7 +41,7 @@ fun PerformancesScreen(ratings: RatingModel, driver: RatingDriver) {
       items(items) {
         if (it != null) {
           val isRated by ratings.isRated(it).collectAsState(initial = false)
-          PerformanceCard(performance = it, colorBg = !isRated) { ratingTarget = it }
+          PerformanceCard(performance = it, isNew = !isRated) { ratingTarget = it }
         } else {
           PerformanceCard(Performance(0, Participant("", "", ""), ""))
         }
