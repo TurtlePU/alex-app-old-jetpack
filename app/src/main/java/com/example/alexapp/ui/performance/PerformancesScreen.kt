@@ -14,14 +14,25 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.example.alexapp.drivers.examplePager
 import com.example.alexapp.models.RatingModel
+import com.example.alexapp.models.RestoreModel.Rating
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
+interface RatingDriver {
+  val performances: Flow<PagingData<Performance>>
+  suspend fun rate(performance: Performance, rating: Rating)
+
+  object Example : RatingDriver {
+    override val performances = examplePager.flow
+    override suspend fun rate(performance: Performance, rating: Rating) {}
+  }
+}
+
 @Composable
-fun PerformancesScreen(performances: Flow<PagingData<Performance>>, ratings: RatingModel) {
-  val items = performances.collectAsLazyPagingItems()
+fun PerformancesScreen(ratings: RatingModel, driver: RatingDriver) {
+  val items = driver.performances.collectAsLazyPagingItems()
   val isRefreshing = items.loadState.refresh == LoadState.Loading
   var ratingTarget: Performance? by remember { mutableStateOf(null) }
 
@@ -42,7 +53,10 @@ fun PerformancesScreen(performances: Flow<PagingData<Performance>>, ratings: Rat
     val rating by ratings.restore(it).collectAsState(initial = null)
     val scope = rememberCoroutineScope()
     PerformancePopup(it, rating = rating, modifier = Modifier.padding(8.dp)) { newRating ->
-      scope.launch { ratings.rate(it, newRating) }
+      scope.launch {
+        ratings.rate(it, newRating)
+        driver.rate(it, newRating)
+      }
       ratingTarget = null
     }
   }
@@ -51,5 +65,5 @@ fun PerformancesScreen(performances: Flow<PagingData<Performance>>, ratings: Rat
 @Preview
 @Composable
 fun PerformancesPreview() {
-  PerformancesScreen(examplePager.flow, RatingModel.Example(remember { mutableStateMapOf() }))
+  PerformancesScreen(RatingModel.Example(remember { mutableStateMapOf() }), RatingDriver.Example)
 }

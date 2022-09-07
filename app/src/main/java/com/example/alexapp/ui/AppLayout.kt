@@ -1,6 +1,5 @@
 package com.example.alexapp.ui
 
-import Performance
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,8 +15,6 @@ import com.example.alexapp.domains.Authorization
 import com.example.alexapp.drivers.AppDriver
 import com.example.alexapp.models.AppModel
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.models.RatingModel
-import com.example.alexapp.models.RestoreModel.Rating
 import com.example.alexapp.ui.performance.PerformancesScreen
 import com.example.alexapp.ui.theme.AlexAppTheme
 
@@ -42,21 +39,13 @@ fun AppLayout(model: AppModel, driver: AppDriver) {
           })
         }
         composable("performances/{host}:{login}:{token}") {
-          val credentials = it.arguments!!.run {
+          PerformancesScreen(model, driver.authorized(it.arguments!!.run {
             Credentials(
               getString("host")!!,
               getString("login")!!,
               getString("token")!!,
             )
-          }
-          PerformancesScreen(driver.flow(credentials.host), object : RatingModel {
-            override fun restore(performance: Performance) = model.restore(performance)
-            override fun isRated(performance: Performance) = model.isRated(performance)
-            override suspend fun rate(`for`: Performance, rating: Rating) {
-              model.rate(`for`, rating)
-              driver.rate(credentials, `for`, rating)
-            }
-          })
+          }))
         }
       }
     }
