@@ -2,7 +2,7 @@ package com.example.alexapp.drivers
 
 import com.example.alexapp.models.AuthorizationModel
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.ui.performance.RatingDriver
+import com.example.alexapp.performance.RatingDriver
 
 interface AppDriver {
   fun authorized(credentials: Credentials): RatingDriver

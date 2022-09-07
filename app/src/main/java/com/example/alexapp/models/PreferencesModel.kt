@@ -4,7 +4,7 @@ import Performance
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.ui.performance.Rating
+import com.example.alexapp.performance.Rating
 import kotlinx.coroutines.flow.map
 
 class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel {

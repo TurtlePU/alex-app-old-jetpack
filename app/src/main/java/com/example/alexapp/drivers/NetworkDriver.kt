@@ -10,8 +10,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.ui.performance.Rating
-import com.example.alexapp.ui.performance.RatingDriver
+import com.example.alexapp.performance.Rating
+import com.example.alexapp.performance.RatingDriver
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
