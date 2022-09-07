@@ -1,4 +1,4 @@
-package com.example.alexapp.models
+package com.example.alexapp.authorization
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.flowOf
 interface AuthorizationModel {
   val initials: Flow<Credentials?>
   suspend fun remember(credentials: Credentials)
-
-  data class Credentials(val host: String, val login: String, val token: String)
 
   object Example : AuthorizationModel {
     const val login = "Android"

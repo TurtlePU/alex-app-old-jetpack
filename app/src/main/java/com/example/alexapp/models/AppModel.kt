@@ -1,7 +1,8 @@
 package com.example.alexapp.models
 
 import Performance
-import com.example.alexapp.models.AuthorizationModel.Credentials
+import com.example.alexapp.authorization.AuthorizationModel
+import com.example.alexapp.authorization.Credentials
 import com.example.alexapp.performance.Rating
 import com.example.alexapp.performance.RatingModel
 

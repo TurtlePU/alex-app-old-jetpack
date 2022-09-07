@@ -1,7 +1,7 @@
 package com.example.alexapp.drivers
 
-import com.example.alexapp.models.AuthorizationModel
-import com.example.alexapp.models.AuthorizationModel.Credentials
+import com.example.alexapp.authorization.AuthorizationModel
+import com.example.alexapp.authorization.Credentials
 import com.example.alexapp.performance.RatingDriver
 
 interface AppDriver {

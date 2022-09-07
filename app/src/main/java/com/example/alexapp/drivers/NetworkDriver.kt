@@ -9,7 +9,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.alexapp.models.AuthorizationModel.Credentials
+import com.example.alexapp.authorization.Credentials
 import com.example.alexapp.performance.Rating
 import com.example.alexapp.performance.RatingDriver
 import io.ktor.client.*
