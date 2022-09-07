@@ -1,4 +1,4 @@
-package com.example.alexapp.models
+package com.example.alexapp.app
 
 import Performance
 import com.example.alexapp.authorization.AuthorizationModel

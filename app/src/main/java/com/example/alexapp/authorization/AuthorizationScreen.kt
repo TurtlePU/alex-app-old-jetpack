@@ -3,7 +3,6 @@ package com.example.alexapp.authorization
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.alexapp.drivers.AppDriver
 
 @Composable
 fun AuthorizationScreen(
@@ -14,8 +13,13 @@ fun AuthorizationScreen(
   Text("Hello, Android!")
 }
 
+fun exampleAuth(credentials: Credentials): String? {
+  val login = AuthorizationModel.Example.login
+  return if (credentials.login != login) "Expected login '$login'" else null
+}
+
 @Composable
 @Preview
 fun AuthorizationPreview() {
-  AuthorizationScreen(AuthorizationModel.Example, AppDriver.Example::authorize)
+  AuthorizationScreen(AuthorizationModel.Example, ::exampleAuth)
 }

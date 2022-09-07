@@ -5,9 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.alexapp.drivers.NetworkDriver
-import com.example.alexapp.models.PreferencesModel
-import com.example.alexapp.ui.AppLayout
+import com.example.alexapp.app.AppLayout
 
 class MainActivity : ComponentActivity() {
   companion object {

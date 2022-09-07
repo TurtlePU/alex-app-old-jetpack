@@ -1,4 +1,4 @@
-package com.example.alexapp.ui
+package com.example.alexapp.app
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -12,8 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.alexapp.authorization.AuthorizationScreen
-import com.example.alexapp.drivers.AppDriver
-import com.example.alexapp.models.AppModel
 import com.example.alexapp.authorization.Credentials
 import com.example.alexapp.performance.PerformancesScreen
 import com.example.alexapp.ui.theme.AlexAppTheme

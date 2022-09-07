@@ -1,8 +1,9 @@
-package com.example.alexapp.models
+package com.example.alexapp
 
 import Performance
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.example.alexapp.app.AppModel
 import com.example.alexapp.authorization.Credentials
 import com.example.alexapp.performance.Rating
 import kotlinx.coroutines.flow.map
