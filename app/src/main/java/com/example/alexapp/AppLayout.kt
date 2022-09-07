@@ -1,4 +1,4 @@
-package com.example.alexapp.app
+package com.example.alexapp
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -11,13 +11,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.alexapp.authorization.AuthorizationModel
 import com.example.alexapp.authorization.AuthorizationScreen
 import com.example.alexapp.authorization.Credentials
+import com.example.alexapp.authorization.exampleAuth
 import com.example.alexapp.performance.PerformancesScreen
+import com.example.alexapp.performance.RatingDriver
+import com.example.alexapp.performance.RatingModel
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
-fun AppLayout(model: AppModel, driver: AppDriver) {
+fun AppLayout(
+  authModel: AuthorizationModel,
+  ratingModel: RatingModel,
+  authorize: suspend (Credentials) -> String?,
+  authorized: (Credentials) -> RatingDriver,
+) {
   AlexAppTheme {
     Surface(
       modifier = Modifier.fillMaxSize(),
@@ -26,12 +35,12 @@ fun AppLayout(model: AppModel, driver: AppDriver) {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
-          AuthorizationScreen(model, driver::authorize) {
+          AuthorizationScreen(authModel, authorize) {
             navController.navigate("performances/$host:$login:$token")
           }
         }
         composable("performances/{host}:{login}:{token}") {
-          PerformancesScreen(model, driver.authorized(it.arguments!!.run {
+          PerformancesScreen(ratingModel, authorized(it.arguments!!.run {
             Credentials(
               getString("host")!!,
               getString("login")!!,
@@ -47,5 +56,9 @@ fun AppLayout(model: AppModel, driver: AppDriver) {
 @Preview
 @Composable
 fun AppPreview() {
-  AppLayout(AppModel.Example(remember { mutableStateMapOf() }), AppDriver.Example)
+  AppLayout(
+    AuthorizationModel.Example,
+    RatingModel.Example(remember { mutableStateMapOf() }),
+    ::exampleAuth
+  ) { RatingDriver.Example }
 }

@@ -9,7 +9,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.alexapp.app.AppDriver
 import com.example.alexapp.authorization.Credentials
 import com.example.alexapp.performance.Rating
 import com.example.alexapp.performance.RatingDriver
@@ -23,7 +22,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
-object NetworkDriver : AppDriver {
+object NetworkDriver {
   private val client = HttpClient(CIO) {
     install(JsonFeature) {
       serializer = KotlinxSerializer(Protocol.json)
@@ -47,7 +46,7 @@ object NetworkDriver : AppDriver {
     }
   }
 
-  private class Authorized(private val credentials: Credentials) : RatingDriver {
+  class Authorized(private val credentials: Credentials) : RatingDriver {
     override val performances = Pager(PagingConfig(100)) {
       object : PagingSource<Int, Performance>() {
         override fun getRefreshKey(state: PagingState<Int, Performance>): Int? {
@@ -70,9 +69,7 @@ object NetworkDriver : AppDriver {
     }
   }
 
-  override fun authorized(credentials: Credentials): RatingDriver = Authorized(credentials)
-
-  override suspend fun authorize(credentials: Credentials) = try {
+  suspend fun authorize(credentials: Credentials) = try {
     val (host, login, token) = credentials
     val response: HttpResponse = client.post("$host/auth") {
       body = PostAuth(login, token)

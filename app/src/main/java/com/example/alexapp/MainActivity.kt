@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.alexapp.app.AppLayout
 
 class MainActivity : ComponentActivity() {
   companion object {
@@ -14,6 +13,7 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { AppLayout(PreferencesModel(dataStore), NetworkDriver) }
+    val model = PreferencesModel(dataStore)
+    setContent { AppLayout(model, model, NetworkDriver::authorize, NetworkDriver::Authorized) }
   }
 }

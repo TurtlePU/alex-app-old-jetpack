@@ -3,12 +3,14 @@ package com.example.alexapp
 import Performance
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import com.example.alexapp.app.AppModel
+import com.example.alexapp.authorization.AuthorizationModel
 import com.example.alexapp.authorization.Credentials
 import com.example.alexapp.performance.Rating
+import com.example.alexapp.performance.RatingModel
 import kotlinx.coroutines.flow.map
 
-class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel {
+class PreferencesModel(private val dataStore: DataStore<Preferences>) : AuthorizationModel,
+  RatingModel {
   override val initials get() = dataStore.data.map(Companion::credentials)
   override suspend fun remember(credentials: Credentials) {
     dataStore.edit { credentials.remember(it) }
