@@ -7,4 +7,5 @@ interface RestoreModel {
   data class Rating(val grade: Double, val comment: String?)
 
   fun restore(performance: Performance): Flow<Rating?>
+  fun isRated(performance: Performance): Flow<Boolean>
 }

@@ -15,6 +15,7 @@ interface App : AppDriver, AuthorizationModel, RestoreModel {
     override suspend fun remember(credentials: Credentials) = auth.remember(credentials)
     override suspend fun authorize(credentials: Credentials) = auth.authorize(credentials)
     override fun restore(performance: Performance) = perf.restore(performance)
+    override fun isRated(performance: Performance) = perf.isRated(performance)
     override fun flow(host: String) = perf.flow
     override suspend fun rate(credentials: Credentials, performance: Performance, rating: Rating) {
       perf.rate(performance, rating)

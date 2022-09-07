@@ -14,6 +14,9 @@ class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel
   }
 
   override fun restore(performance: Performance) = dataStore.data.map { performance.rating(it) }
+  override fun isRated(performance: Performance) =
+    dataStore.data.map { it.contains(performance.GRADE) }
+
   override suspend fun rate(`for`: Performance, rating: Rating) {
     dataStore.edit { `for`.remember(rating, it) }
   }

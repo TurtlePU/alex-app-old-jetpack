@@ -13,6 +13,7 @@ interface Performances : RatingModel {
   class Example(private val ratings: MutableMap<Performance, Rating>) : Performances {
     override val flow get() = Pager(PagingConfig(100)) { DefaultSource }.flow
     override fun restore(performance: Performance) = flowOf(ratings[performance])
+    override fun isRated(performance: Performance) = flowOf(ratings.contains(performance))
     override suspend fun rate(`for`: Performance, rating: Rating) {
       ratings[`for`] = rating
     }

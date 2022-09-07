@@ -12,6 +12,7 @@ class CompositeApp(private val model: AppModel, private val driver: AppDriver) :
   override suspend fun remember(credentials: Credentials) = model.remember(credentials)
   override suspend fun authorize(credentials: Credentials) = driver.authorize(credentials)
   override fun restore(performance: Performance) = model.restore(performance)
+  override fun isRated(performance: Performance) = model.isRated(performance)
   override suspend fun rate(credentials: Credentials, performance: Performance, rating: Rating) {
     model.rate(performance, rating)
     driver.rate(credentials, performance, rating)
