@@ -1,4 +1,4 @@
-package com.example.alexapp.ui
+package com.example.alexapp.ui.performance
 
 import Participant
 import Performance
@@ -8,7 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.paging.*
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.example.alexapp.drivers.examplePager

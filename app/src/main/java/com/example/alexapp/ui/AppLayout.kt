@@ -18,6 +18,7 @@ import com.example.alexapp.models.AppModel
 import com.example.alexapp.models.AuthorizationModel.Credentials
 import com.example.alexapp.models.RatingModel
 import com.example.alexapp.models.RestoreModel.Rating
+import com.example.alexapp.ui.performance.PerformancesScreen
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
