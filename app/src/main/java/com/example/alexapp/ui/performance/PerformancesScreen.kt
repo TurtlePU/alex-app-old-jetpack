@@ -8,11 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
-import androidx.paging.PagingData
+import androidx.paging.*
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.example.alexapp.drivers.examplePager
 import com.example.alexapp.models.RatingModel
 import com.example.alexapp.models.RatingModel.Rating
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -21,12 +19,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 interface RatingDriver {
-  val performances: Flow<PagingData<Performance>>
   suspend fun rate(performance: Performance, rating: Rating)
+  val performances: Flow<PagingData<Performance>>
 
   object Example : RatingDriver {
-    override val performances = examplePager.flow
     override suspend fun rate(performance: Performance, rating: Rating) {}
+    override val performances = Pager(PagingConfig(100)) {
+      object : PagingSource<Int, Performance>() {
+        override fun getRefreshKey(state: PagingState<Int, Performance>): Int? {
+          TODO("Not yet implemented")
+        }
+
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
+          TODO("Not yet implemented")
+        }
+      }
+    }.flow
   }
 }
 
