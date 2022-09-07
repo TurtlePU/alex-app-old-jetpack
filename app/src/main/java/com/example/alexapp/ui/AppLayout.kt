@@ -11,7 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.alexapp.domains.Authorization
 import com.example.alexapp.drivers.AppDriver
 import com.example.alexapp.models.AppModel
 import com.example.alexapp.models.AuthorizationModel.Credentials
@@ -28,15 +27,9 @@ fun AppLayout(model: AppModel, driver: AppDriver) {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
-          AuthorizationScreen(object : Authorization {
-            override val initials get() = model.initials
-            override suspend fun authorize(credentials: Credentials) = driver.authorize(credentials)
-            override suspend fun remember(credentials: Credentials) {
-              model.remember(credentials)
-              val (host, login, token) = credentials
-              navController.navigate("performances/$host:$login:$token")
-            }
-          })
+          AuthorizationScreen(model, driver::authorize) {
+            navController.navigate("performances/$host:$login:$token")
+          }
         }
         composable("performances/{host}:{login}:{token}") {
           PerformancesScreen(model, driver.authorized(it.arguments!!.run {
