@@ -4,29 +4,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.alexapp.authorization.AuthorizationModel
+import com.example.alexapp.authorization.AuthorizationPreview
 import com.example.alexapp.authorization.AuthorizationScreen
 import com.example.alexapp.authorization.Credentials
-import com.example.alexapp.authorization.exampleAuth
+import com.example.alexapp.authorization.OnSuccess
+import com.example.alexapp.performance.PerformancesPreview
 import com.example.alexapp.performance.PerformancesScreen
-import com.example.alexapp.performance.RatingDriver
-import com.example.alexapp.performance.RatingModel
 import com.example.alexapp.ui.theme.AlexAppTheme
+import io.ktor.client.*
 
 @Composable
-fun AppLayout(
-  authModel: AuthorizationModel,
-  ratingModel: RatingModel,
-  authorize: suspend (Credentials) -> String?,
-  ratingDriver: (Credentials) -> RatingDriver,
-) {
+fun AppLayout(auth: @Composable (OnSuccess) -> Unit, rating: @Composable (Credentials) -> Unit) {
   AlexAppTheme {
     Surface(
       modifier = Modifier.fillMaxSize(),
@@ -35,30 +30,44 @@ fun AppLayout(
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
-          AuthorizationScreen(authModel, authorize) {
-            navController.navigate("performances/$host:$login:$token")
-          }
+          auth { navController.navigate("performances/$host:$login:$token") }
         }
         composable("performances/{host}:{login}:{token}") {
-          PerformancesScreen(ratingModel, ratingDriver(it.arguments!!.run {
+          val credentials = it.arguments!!.run {
             Credentials(
               getString("host")!!,
               getString("login")!!,
-              getString("token")!!,
+              getString("token")!!
             )
-          }))
+          }
+          rating(credentials)
         }
       }
     }
   }
 }
 
+@Composable
+fun AppInject(data: DataStore<Preferences>, client: HttpClient) {
+  AppLayout(
+    { onSuccess ->
+      AuthorizationScreen(
+        AuthorizationPreferences(data),
+        { creds -> authorize(client, creds) },
+        onSuccess
+      )
+    },
+    { credentials ->
+      PerformancesScreen(
+        RatingPreferences(data),
+        NetworkRatings(client, credentials)
+      )
+    },
+  )
+}
+
 @Preview
 @Composable
 fun AppPreview() {
-  AppLayout(
-    AuthorizationModel.Example,
-    RatingModel.Example(remember { mutableStateMapOf() }),
-    ::exampleAuth
-  ) { RatingDriver.Example }
+  AppLayout({ AuthorizationPreview(it) }, { PerformancesPreview() })
 }
