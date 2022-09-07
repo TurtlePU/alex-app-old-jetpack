@@ -12,15 +12,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.alexapp.domains.App
 import com.example.alexapp.domains.Authorization
+import com.example.alexapp.drivers.AppDriver
+import com.example.alexapp.models.AppModel
 import com.example.alexapp.models.AuthorizationModel.Credentials
 import com.example.alexapp.models.RatingModel
 import com.example.alexapp.models.RestoreModel.Rating
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
-fun AppLayout(app: App) {
+fun AppLayout(model: AppModel, driver: AppDriver) {
   AlexAppTheme {
     Surface(
       modifier = Modifier.fillMaxSize(),
@@ -30,10 +31,10 @@ fun AppLayout(app: App) {
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
           AuthorizationScreen(object : Authorization {
-            override val initials get() = app.initials
-            override suspend fun authorize(credentials: Credentials) = app.authorize(credentials)
+            override val initials get() = model.initials
+            override suspend fun authorize(credentials: Credentials) = driver.authorize(credentials)
             override suspend fun remember(credentials: Credentials) {
-              app.remember(credentials)
+              model.remember(credentials)
               val (host, login, token) = credentials
               navController.navigate("performances/$host:$login:$token")
             }
@@ -47,11 +48,12 @@ fun AppLayout(app: App) {
               getString("token")!!,
             )
           }
-          PerformancesScreen(app.flow(credentials.host), object : RatingModel {
-            override fun restore(performance: Performance) = app.restore(performance)
-            override fun isRated(performance: Performance) = app.isRated(performance)
+          PerformancesScreen(driver.flow(credentials.host), object : RatingModel {
+            override fun restore(performance: Performance) = model.restore(performance)
+            override fun isRated(performance: Performance) = model.isRated(performance)
             override suspend fun rate(`for`: Performance, rating: Rating) {
-              app.rate(credentials, `for`, rating)
+              model.rate(`for`, rating)
+              driver.rate(credentials, `for`, rating)
             }
           })
         }
@@ -63,5 +65,5 @@ fun AppLayout(app: App) {
 @Preview
 @Composable
 fun AppPreview() {
-  AppLayout(App.Example(remember { mutableStateMapOf() }))
+  AppLayout(AppModel.Example(remember { mutableStateMapOf() }), AppDriver.Example)
 }
