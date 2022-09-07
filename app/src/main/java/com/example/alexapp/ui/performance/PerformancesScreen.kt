@@ -13,45 +13,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-
-data class Rating(val grade: Double, val comment: String?)
-
-interface RatingModel {
-  fun restore(performance: Performance): Flow<Rating?>
-  fun isRated(performance: Performance): Flow<Boolean>
-  suspend fun rate(performance: Performance, rating: Rating)
-
-  open class Example(private val map: MutableMap<Performance, Rating>) : RatingModel {
-    override fun restore(performance: Performance) = flowOf(map[performance])
-    override fun isRated(performance: Performance) = flowOf(map.contains(performance))
-    override suspend fun rate(performance: Performance, rating: Rating) {
-      map[performance] = rating
-    }
-  }
-}
-
-interface RatingDriver {
-  suspend fun rate(performance: Performance, rating: Rating)
-  val performances: Flow<PagingData<Performance>>
-
-  object Example : RatingDriver {
-    override suspend fun rate(performance: Performance, rating: Rating) {}
-    override val performances = Pager(PagingConfig(100)) {
-      object : PagingSource<Int, Performance>() {
-        override fun getRefreshKey(state: PagingState<Int, Performance>): Int? {
-          TODO("Not yet implemented")
-        }
-
-        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
-          TODO("Not yet implemented")
-        }
-      }
-    }.flow
-  }
-}
 
 @Composable
 fun PerformancesScreen(ratings: RatingModel, driver: RatingDriver) {
