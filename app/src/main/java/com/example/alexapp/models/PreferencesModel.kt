@@ -4,7 +4,7 @@ import Performance
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.alexapp.models.AuthorizationModel.Credentials
-import com.example.alexapp.models.RestoreModel.Rating
+import com.example.alexapp.models.RatingModel.Rating
 import kotlinx.coroutines.flow.map
 
 class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel {
@@ -17,8 +17,8 @@ class PreferencesModel(private val dataStore: DataStore<Preferences>) : AppModel
   override fun isRated(performance: Performance) =
     dataStore.data.map { it.contains(performance.GRADE) }
 
-  override suspend fun rate(`for`: Performance, rating: Rating) {
-    dataStore.edit { `for`.remember(rating, it) }
+  override suspend fun rate(performance: Performance, rating: Rating) {
+    dataStore.edit { performance.remember(rating, it) }
   }
 
   companion object {

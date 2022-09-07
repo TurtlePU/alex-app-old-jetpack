@@ -14,7 +14,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.example.alexapp.drivers.examplePager
 import com.example.alexapp.models.RatingModel
-import com.example.alexapp.models.RestoreModel.Rating
+import com.example.alexapp.models.RatingModel.Rating
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.Flow
