@@ -8,17 +8,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
+import androidx.paging.*
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.example.alexapp.domains.Performances
+import com.example.alexapp.drivers.examplePager
+import com.example.alexapp.models.RatingModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
-fun PerformancesScreen(performances: Performances) {
-  val items = performances.flow.collectAsLazyPagingItems()
+fun PerformancesScreen(performances: Flow<PagingData<Performance>>, ratings: RatingModel) {
+  val items = performances.collectAsLazyPagingItems()
   val isRefreshing = items.loadState.refresh == LoadState.Loading
   var ratingTarget: Performance? by remember { mutableStateOf(null) }
 
@@ -26,7 +28,7 @@ fun PerformancesScreen(performances: Performances) {
     LazyColumn {
       items(items) {
         if (it != null) {
-          val isRated by performances.isRated(it).collectAsState(initial = false)
+          val isRated by ratings.isRated(it).collectAsState(initial = false)
           PerformanceCard(performance = it, colorBg = !isRated) { ratingTarget = it }
         } else {
           PerformanceCard(Performance(0, Participant("", "", ""), ""))
@@ -36,10 +38,10 @@ fun PerformancesScreen(performances: Performances) {
   }
 
   ratingTarget?.let {
-    val rating by performances.restore(it).collectAsState(initial = null)
+    val rating by ratings.restore(it).collectAsState(initial = null)
     val scope = rememberCoroutineScope()
     PerformancePopup(it, rating = rating, modifier = Modifier.padding(8.dp)) { newRating ->
-      scope.launch { performances.rate(it, newRating) }
+      scope.launch { ratings.rate(it, newRating) }
       ratingTarget = null
     }
   }
@@ -48,5 +50,5 @@ fun PerformancesScreen(performances: Performances) {
 @Preview
 @Composable
 fun PerformancesPreview() {
-  PerformancesScreen(Performances.Example(remember { mutableStateMapOf() }))
+  PerformancesScreen(examplePager.flow, RatingModel.Example(remember { mutableStateMapOf() }))
 }

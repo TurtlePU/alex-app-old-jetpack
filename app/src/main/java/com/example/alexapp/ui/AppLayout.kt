@@ -1,5 +1,6 @@
 package com.example.alexapp.ui
 
+import Performance
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,10 +12,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.alexapp.models.AuthorizationModel
 import com.example.alexapp.domains.App
-import com.example.alexapp.domains.CredentialPerformances
-import com.example.alexapp.domains.OverloadedAuth
+import com.example.alexapp.domains.Authorization
+import com.example.alexapp.models.AuthorizationModel.Credentials
+import com.example.alexapp.models.RatingModel
+import com.example.alexapp.models.RestoreModel.Rating
 import com.example.alexapp.ui.theme.AlexAppTheme
 
 @Composable
@@ -27,22 +29,31 @@ fun AppLayout(app: App) {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
-          AuthorizationScreen(
-            OverloadedAuth(app) {
+          AuthorizationScreen(object : Authorization {
+            override val initials get() = app.initials
+            override suspend fun authorize(credentials: Credentials) = app.authorize(credentials)
+            override suspend fun remember(credentials: Credentials) {
+              app.remember(credentials)
+              val (host, login, token) = credentials
               navController.navigate("performances/$host:$login:$token")
             }
-          )
+          })
         }
         composable("performances/{host}:{login}:{token}") {
-          PerformancesScreen(
-            CredentialPerformances(app, it.arguments!!.run {
-              AuthorizationModel.Credentials(
-                getString("host")!!,
-                getString("login")!!,
-                getString("token")!!,
-              )
-            })
-          )
+          val credentials = it.arguments!!.run {
+            Credentials(
+              getString("host")!!,
+              getString("login")!!,
+              getString("token")!!,
+            )
+          }
+          PerformancesScreen(app.flow(credentials.host), object : RatingModel {
+            override fun restore(performance: Performance) = app.restore(performance)
+            override fun isRated(performance: Performance) = app.isRated(performance)
+            override suspend fun rate(`for`: Performance, rating: Rating) {
+              app.rate(credentials, `for`, rating)
+            }
+          })
         }
       }
     }
