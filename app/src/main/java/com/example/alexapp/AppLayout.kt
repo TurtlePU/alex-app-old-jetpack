@@ -25,7 +25,7 @@ fun AppLayout(
   authModel: AuthorizationModel,
   ratingModel: RatingModel,
   authorize: suspend (Credentials) -> String?,
-  authorized: (Credentials) -> RatingDriver,
+  ratingDriver: (Credentials) -> RatingDriver,
 ) {
   AlexAppTheme {
     Surface(
@@ -40,7 +40,7 @@ fun AppLayout(
           }
         }
         composable("performances/{host}:{login}:{token}") {
-          PerformancesScreen(ratingModel, authorized(it.arguments!!.run {
+          PerformancesScreen(ratingModel, ratingDriver(it.arguments!!.run {
             Credentials(
               getString("host")!!,
               getString("login")!!,
