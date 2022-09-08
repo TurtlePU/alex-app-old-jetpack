@@ -1,4 +1,4 @@
-package com.example.alexapp.performance
+package com.example.alexapp
 
 import Participant
 import Performance
@@ -32,7 +32,7 @@ interface RatingDriver {
 }
 
 @Composable
-fun PerformancesScreen(ratings: RatingModel, driver: RatingDriver) {
+fun Exposition(ratings: RatingModel, driver: RatingDriver) {
   val items = driver.performances.collectAsLazyPagingItems()
   val isRefreshing = items.loadState.refresh == LoadState.Loading
   var ratingTarget: Performance? by remember { mutableStateOf(null) }
@@ -51,9 +51,9 @@ fun PerformancesScreen(ratings: RatingModel, driver: RatingDriver) {
   }
 
   ratingTarget?.let {
-    val rating by ratings.restore(it).collectAsState(initial = null)
+    val oldRating by ratings.restore(it).collectAsState(initial = null)
     val scope = rememberCoroutineScope()
-    PerformancePopup(it, rating = rating, modifier = Modifier.padding(8.dp)) { newRating ->
+    Evaluation(it, oldRating = oldRating, modifier = Modifier.padding(8.dp)) { newRating ->
       scope.launch {
         ratings.rate(it, newRating)
         driver.rate(it, newRating)
@@ -65,9 +65,9 @@ fun PerformancesScreen(ratings: RatingModel, driver: RatingDriver) {
 
 @Preview
 @Composable
-fun PerformancesPreview() {
+fun ExpositionPreview() {
   val map = remember { mutableStateMapOf<Performance, Rating>() }
-  PerformancesScreen(
+  Exposition(
     object : RatingModel {
       override fun restore(performance: Performance) = flowOf(map[performance])
       override fun isRated(performance: Performance) = flowOf(map.contains(performance))

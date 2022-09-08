@@ -1,4 +1,4 @@
-package com.example.alexapp.authorization
+package com.example.alexapp
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +16,7 @@ interface AuthorizationModel {
 typealias OnSuccess = Credentials.() -> Unit
 
 @Composable
-fun AuthorizationScreen(
+fun Authorization(
   model: AuthorizationModel,
   authorize: suspend (Credentials) -> String?,
   onSuccess: OnSuccess
@@ -28,7 +28,7 @@ fun AuthorizationScreen(
 @Preview
 fun AuthorizationPreview(onSuccess: OnSuccess = {}) {
   val login = "Android"
-  AuthorizationScreen(
+  Authorization(
     object : AuthorizationModel {
       override val initials = flowOf(Credentials("https://example.com", login, "token"))
       override suspend fun remember(credentials: Credentials) = assert(credentials.login == login)

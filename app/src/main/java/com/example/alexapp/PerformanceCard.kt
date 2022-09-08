@@ -1,4 +1,4 @@
-package com.example.alexapp.performance
+package com.example.alexapp
 
 import Participant
 import Performance

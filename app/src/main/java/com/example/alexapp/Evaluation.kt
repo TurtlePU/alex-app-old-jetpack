@@ -1,14 +1,14 @@
-package com.example.alexapp.performance
+package com.example.alexapp
 
 import Performance
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun PerformancePopup(
+fun Evaluation(
   performance: Performance,
   modifier: Modifier = Modifier,
-  rating: Rating? = null,
+  oldRating: Rating? = null,
   commit: (Rating) -> Unit = {}
 ) {
   //

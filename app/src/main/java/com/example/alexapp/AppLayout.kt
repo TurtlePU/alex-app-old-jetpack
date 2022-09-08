@@ -11,17 +11,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.alexapp.authorization.AuthorizationPreview
-import com.example.alexapp.authorization.AuthorizationScreen
-import com.example.alexapp.authorization.Credentials
-import com.example.alexapp.authorization.OnSuccess
-import com.example.alexapp.performance.PerformancesPreview
-import com.example.alexapp.performance.PerformancesScreen
 import com.example.alexapp.ui.theme.AlexAppTheme
 import io.ktor.client.*
 
 @Composable
-fun AppLayout(auth: @Composable (OnSuccess) -> Unit, rating: @Composable (Credentials) -> Unit) {
+fun AppLayout(auth: @Composable (OnSuccess) -> Unit, expo: @Composable (Credentials) -> Unit) {
   AlexAppTheme {
     Surface(
       modifier = Modifier.fillMaxSize(),
@@ -40,7 +34,7 @@ fun AppLayout(auth: @Composable (OnSuccess) -> Unit, rating: @Composable (Creden
               getString("token")!!
             )
           }
-          rating(credentials)
+          expo(credentials)
         }
       }
     }
@@ -51,14 +45,14 @@ fun AppLayout(auth: @Composable (OnSuccess) -> Unit, rating: @Composable (Creden
 fun AppInject(data: DataStore<Preferences>, client: HttpClient) {
   AppLayout(
     { onSuccess ->
-      AuthorizationScreen(
+      Authorization(
         AuthorizationPreferences(data),
         { creds -> authorize(client, creds) },
         onSuccess
       )
     },
     { credentials ->
-      PerformancesScreen(
+      Exposition(
         RatingPreferences(data),
         NetworkRatings(client, credentials)
       )
@@ -69,5 +63,5 @@ fun AppInject(data: DataStore<Preferences>, client: HttpClient) {
 @Preview
 @Composable
 fun AppPreview() {
-  AppLayout({ AuthorizationPreview(it) }, { PerformancesPreview() })
+  AppLayout({ AuthorizationPreview(it) }, { ExpositionPreview() })
 }
