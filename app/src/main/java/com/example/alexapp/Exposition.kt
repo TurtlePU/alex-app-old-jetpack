@@ -2,8 +2,11 @@ package com.example.alexapp
 
 import Participant
 import Performance
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -11,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.*
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.example.alexapp.ui.theme.AlexAppTheme
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +41,11 @@ fun Exposition(ratings: RatingModel, driver: RatingDriver) {
   val isRefreshing = items.loadState.refresh == LoadState.Loading
   var ratingTarget: Performance? by remember { mutableStateOf(null) }
 
-  SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing), onRefresh = items::refresh) {
+  SwipeRefresh(
+    state = rememberSwipeRefreshState(isRefreshing),
+    onRefresh = items::refresh,
+    modifier = Modifier.fillMaxSize(),
+  ) {
     LazyColumn {
       items(items) {
         if (it != null) {
@@ -63,12 +71,11 @@ fun Exposition(ratings: RatingModel, driver: RatingDriver) {
   }
 }
 
-@Preview
 @Composable
-fun ExpositionPreview() {
-  val map = remember { mutableStateMapOf<Performance, Rating>() }
+fun MockExposition() {
   Exposition(
     object : RatingModel {
+      val map = remember { mutableStateMapOf<Performance, Rating>() }
       override fun restore(performance: Performance) = flowOf(map[performance])
       override fun isRated(performance: Performance) = flowOf(map.contains(performance))
       override suspend fun rate(performance: Performance, rating: Rating) {
@@ -76,6 +83,7 @@ fun ExpositionPreview() {
       }
     },
     object : RatingDriver {
+      val accumulated = remember { mutableStateListOf<Performance>() }
       override suspend fun rate(performance: Performance, rating: Rating) {}
       override val performances = Pager(PagingConfig(100)) {
         object : PagingSource<Int, Performance>() {
@@ -84,12 +92,23 @@ fun ExpositionPreview() {
           }
 
           override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
-            val choir = Participant("Choir #${Random.nextInt()}}", "Soviet songs", "100")
+            val choir = Participant("Choir #${Random.nextInt()}", "Soviet songs", "100")
             val result = Performance(params.key ?: 0, choir, "Katusha #${Random.nextInt()}")
-            return LoadResult.Page(listOf(result), null, null)
+            accumulated.add(result)
+            return LoadResult.Page(accumulated, null, null)
           }
         }
       }.flow
     },
   )
+}
+
+@Preview
+@Composable
+fun ExpositionPreview() {
+  AlexAppTheme {
+    Surface(color = MaterialTheme.colorScheme.background) {
+      MockExposition()
+    }
+  }
 }

@@ -63,5 +63,5 @@ fun AppInject(data: DataStore<Preferences>, client: HttpClient) {
 @Preview
 @Composable
 fun AppPreview() {
-  AppLayout({ AuthorizationPreview(it) }, { ExpositionPreview() })
+  AppLayout({ AuthorizationPreview(it) }, { MockExposition() })
 }
