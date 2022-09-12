@@ -41,74 +41,65 @@ fun Exposition(ratings: RatingModel, driver: RatingDriver) {
   val isRefreshing = items.loadState.refresh == LoadState.Loading
   var ratingTarget: Performance? by remember { mutableStateOf(null) }
 
-  SwipeRefresh(
-    state = rememberSwipeRefreshState(isRefreshing),
-    onRefresh = items::refresh,
-    modifier = Modifier.fillMaxSize(),
-  ) {
-    LazyColumn {
-      items(items) {
-        if (it != null) {
-          val isRated by ratings.isRated(it).collectAsState(initial = false)
-          PerformanceCard(performance = it, isNew = !isRated) { ratingTarget = it }
-        } else {
-          PerformanceCard(Performance(0, Participant("", "", ""), ""))
+  Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
+    SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing), onRefresh = items::refresh) {
+      LazyColumn {
+        items(items) {
+          if (it != null) {
+            val isRated by ratings.isRated(it).collectAsState(initial = false)
+            PerformanceCard(performance = it, isNew = !isRated) { ratingTarget = it }
+          } else {
+            PerformanceCard(Performance(0, Participant("", "", ""), ""))
+          }
         }
       }
     }
-  }
 
-  ratingTarget?.let {
-    val oldRating by ratings.restore(it).collectAsState(initial = null)
-    val scope = rememberCoroutineScope()
-    Evaluation(it, oldRating = oldRating, modifier = Modifier.padding(8.dp)) { newRating ->
-      scope.launch {
-        ratings.rate(it, newRating)
-        driver.rate(it, newRating)
+    ratingTarget?.let {
+      val oldRating by ratings.restore(it).collectAsState(initial = null)
+      val scope = rememberCoroutineScope()
+      Evaluation(it, oldRating = oldRating, modifier = Modifier.padding(8.dp)) { newRating ->
+        scope.launch {
+          ratings.rate(it, newRating)
+          driver.rate(it, newRating)
+        }
+        ratingTarget = null
       }
-      ratingTarget = null
     }
   }
-}
-
-@Composable
-fun MockExposition() {
-  Exposition(
-    object : RatingModel {
-      val map = remember { mutableStateMapOf<Performance, Rating>() }
-      override fun restore(performance: Performance) = flowOf(map[performance])
-      override fun isRated(performance: Performance) = flowOf(map.contains(performance))
-      override suspend fun rate(performance: Performance, rating: Rating) {
-        map[performance] = rating
-      }
-    },
-    object : RatingDriver {
-      val accumulated = remember { mutableStateListOf<Performance>() }
-      override suspend fun rate(performance: Performance, rating: Rating) {}
-      override val performances = Pager(PagingConfig(100)) {
-        object : PagingSource<Int, Performance>() {
-          override fun getRefreshKey(state: PagingState<Int, Performance>) = state.run {
-            ((anchorPosition ?: 0) - config.initialLoadSize / 2).coerceAtLeast(0)
-          }
-
-          override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
-            val choir = Participant("Choir #${Random.nextInt()}", "Soviet songs", "100")
-            val result = Performance(params.key ?: 0, choir, "Katusha #${Random.nextInt()}")
-            accumulated.add(result)
-            return LoadResult.Page(accumulated, null, null)
-          }
-        }
-      }.flow
-    },
-  )
 }
 
 @Preview
 @Composable
 fun ExpositionPreview() {
   AlexAppTheme {
-    Surface(color = MaterialTheme.colorScheme.background) {
-      MockExposition()
-    }
+    Exposition(
+      object : RatingModel {
+        val map = remember { mutableStateMapOf<Performance, Rating>() }
+        override fun restore(performance: Performance) = flowOf(map[performance])
+        override fun isRated(performance: Performance) = flowOf(map.contains(performance))
+        override suspend fun rate(performance: Performance, rating: Rating) {
+          map[performance] = rating
+        }
+      },
+      object : RatingDriver {
+        val accumulated = remember { mutableStateListOf<Performance>() }
+        override suspend fun rate(performance: Performance, rating: Rating) {}
+        override val performances = Pager(PagingConfig(100)) {
+          object : PagingSource<Int, Performance>() {
+            override fun getRefreshKey(state: PagingState<Int, Performance>) = state.run {
+              ((anchorPosition ?: 0) - config.initialLoadSize / 2).coerceAtLeast(0)
+            }
+
+            override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
+              val choir = Participant("Choir #${Random.nextInt()}", "Soviet songs", "100")
+              val result = Performance(params.key ?: 0, choir, "Katusha #${Random.nextInt()}")
+              accumulated.add(result)
+              return LoadResult.Page(accumulated, null, null)
+            }
+          }
+        }.flow
+      },
+    )
   }
 }

@@ -3,6 +3,7 @@ package com.example.alexapp
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.alexapp.ui.theme.AlexAppTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -28,12 +29,14 @@ fun Authorization(
 @Preview
 fun AuthorizationPreview(onSuccess: OnSuccess = {}) {
   val login = "Android"
-  Authorization(
-    object : AuthorizationModel {
-      override val initials = flowOf(Credentials("https://example.com", login, "token"))
-      override suspend fun remember(credentials: Credentials) = assert(credentials.login == login)
-    },
-    { if (it.login != login) "Expected login '$login'" else null },
-    onSuccess,
-  )
+  AlexAppTheme {
+    Authorization(
+      object : AuthorizationModel {
+        override val initials = flowOf(Credentials("https://example.com", login, "token"))
+        override suspend fun remember(credentials: Credentials) = assert(credentials.login == login)
+      },
+      { if (it.login != login) "Expected login '$login'" else null },
+      onSuccess,
+    )
+  }
 }

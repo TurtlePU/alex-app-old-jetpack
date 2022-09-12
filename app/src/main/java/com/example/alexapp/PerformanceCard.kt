@@ -39,7 +39,5 @@ fun PerformanceCardPreview() {
   val whiteStripes = Participant("the White Stripes", "alternative rock", "25")
   val sevenNationArmy = Performance(0, whiteStripes, "Seven Nation Army")
   var isNew by remember { mutableStateOf(true) }
-  AlexAppTheme {
-    PerformanceCard(sevenNationArmy, isNew) { isNew = !isNew }
-  }
+  AlexAppTheme { PerformanceCard(sevenNationArmy, isNew) { isNew = !isNew } }
 }
