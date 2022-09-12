@@ -1,8 +1,9 @@
 package com.example.alexapp
 
+import Protocol
 import android.util.Log
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.android.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -10,7 +11,7 @@ import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-val ktorClient = HttpClient(CIO) {
+val ktorClient = HttpClient(Android) {
   install(JsonFeature) {
     serializer = KotlinxSerializer(Protocol.json)
   }
