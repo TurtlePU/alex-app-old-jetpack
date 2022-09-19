@@ -1,6 +1,8 @@
 package com.example.alexapp
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -8,9 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.alexapp.ui.theme.AlexAppTheme
@@ -65,6 +65,10 @@ fun Authorization(
         onValueChange = { host = toIPv4Address(it) },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Host, e.g. https://1.2.3.4:8080") },
+        keyboardOptions = KeyboardOptions(
+          autoCorrect = false,
+          imeAction = ImeAction.Next,
+        ),
         singleLine = true,
       )
       OutlinedTextField(
@@ -72,6 +76,15 @@ fun Authorization(
         onValueChange = { login = it },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Login") },
+        keyboardOptions = KeyboardOptions(
+          capitalization = KeyboardCapitalization.Words,
+          autoCorrect = false,
+          imeAction = ImeAction.Done,
+        ),
+        keyboardActions = KeyboardActions(onDone = {
+          defaultKeyboardAction(ImeAction.Done)
+          token = login?.let(::generateToken)
+        }),
         singleLine = true,
       )
       var isHidden by rememberSaveable { mutableStateOf(true) }
@@ -90,7 +103,7 @@ fun Authorization(
         trailingIcon = {
           Row {
             IconButton(
-              onClick = { token = login!!.let(::generateToken) },
+              onClick = { token = generateToken(login!!) },
               enabled = login != null,
             ) {
               val imageVector =
