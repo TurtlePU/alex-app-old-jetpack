@@ -9,6 +9,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,11 +41,13 @@ fun Authorization(
   val scope = rememberCoroutineScope()
   val snackBarHostState by remember { mutableStateOf(SnackbarHostState()) }
 
-  var host by rememberSaveable { mutableStateOf(initials?.host) }
+  var host by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+    mutableStateOf(TextFieldValue(initials?.host ?: ""))
+  }
   var login by rememberSaveable { mutableStateOf(initials?.login) }
   var token by rememberSaveable { mutableStateOf(initials?.token) }
 
-  val current = makeCredentials(host, login, token)
+  val current = makeCredentials(host.text, login, token)
 
   Surface(
     modifier = Modifier.fillMaxSize(),
@@ -58,9 +61,10 @@ fun Authorization(
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       OutlinedTextField(
-        value = host ?: "",
-        onValueChange = { host = it },
+        value = host,
+        onValueChange = { host = toIPv4Address(it) },
         modifier = Modifier.fillMaxWidth(),
+        placeholder = { Text(text = "Host, e.g. https://1.2.3.4:8080") },
         singleLine = true,
       )
       OutlinedTextField(
@@ -112,7 +116,7 @@ fun Authorization(
       ) {
         Button(
           onClick = {
-            host = initials!!.host
+            host = TextFieldValue(initials!!.host)
             login = initials!!.login
             token = initials!!.token
           },
@@ -149,15 +153,20 @@ fun Authorization(
   }
 }
 
+fun makeCredentials(host: String?, login: String?, token: String?): Credentials? {
+  return Credentials(host ?: return null, login ?: return null, token ?: return null)
+}
+
+fun toIPv4Address(value: TextFieldValue): TextFieldValue {
+  // TODO: coerce text into form https://<a>.<b>.<c>.<d>:<port>
+  return value
+}
+
 fun generateToken(
   login: String,
   time: Date = Calendar.getInstance().time,
   salt: Int = Random.nextInt()
 ) = (login.hashCode() xor time.hashCode() xor salt).absoluteValue.toString(32)
-
-fun makeCredentials(host: String?, login: String?, token: String?): Credentials? {
-  return Credentials(host ?: return null, login ?: return null, token ?: return null)
-}
 
 @Composable
 @Preview
