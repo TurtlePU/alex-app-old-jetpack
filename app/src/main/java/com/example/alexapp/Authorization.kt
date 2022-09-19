@@ -38,11 +38,11 @@ fun Authorization(
 ) {
   val initials by model.initials.collectAsState(initial = null)
   val scope = rememberCoroutineScope()
+  val snackBarHostState by remember { mutableStateOf(SnackbarHostState()) }
 
   var host by rememberSaveable { mutableStateOf(initials?.host) }
   var login by rememberSaveable { mutableStateOf(initials?.login) }
   var token by rememberSaveable { mutableStateOf(initials?.token) }
-  var lastError by remember { mutableStateOf<String?>(null) }
 
   val current = makeCredentials(host, login, token)
 
@@ -58,15 +58,17 @@ fun Authorization(
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       OutlinedTextField(
-        value = host ?: "https://0.0.0.0:8080",
+        value = host ?: "",
         onValueChange = { host = it },
         modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
       )
       OutlinedTextField(
         value = login ?: "",
         onValueChange = { login = it },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Login") },
+        singleLine = true,
       )
       var isHidden by rememberSaveable { mutableStateOf(true) }
       OutlinedTextField(
@@ -103,6 +105,7 @@ fun Authorization(
         visualTransformation =
         if (isHidden) PasswordVisualTransformation()
         else VisualTransformation.None,
+        singleLine = true,
       )
       Row(
         horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally)
@@ -124,8 +127,10 @@ fun Authorization(
           onClick = {
             scope.launch {
               val credentials = current!!
-              lastError = authorize(credentials)
-              if (lastError == null) {
+              val lastError = authorize(credentials)
+              if (lastError != null) {
+                snackBarHostState.showSnackbar(lastError, duration = SnackbarDuration.Short)
+              } else {
                 model.remember(credentials)
                 onSuccess(credentials)
               }
@@ -139,8 +144,8 @@ fun Authorization(
           Icon(imageVector = Icons.Filled.Login, contentDescription = null)
         }
       }
-      lastError?.let { Snackbar { Text(text = it) } }
     }
+    SnackbarHost(hostState = snackBarHostState) { Snackbar(it) }
   }
 }
 
