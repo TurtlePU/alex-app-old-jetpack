@@ -53,13 +53,25 @@ fun Authorization(
     modifier = Modifier.fillMaxSize(),
     color = MaterialTheme.colorScheme.background,
   ) {
+    SnackbarHost(hostState = snackBarHostState) { Snackbar(it) }
     Column(
       modifier = Modifier
-        .padding(PaddingValues(30.dp, 0.dp))
+        .padding(30.dp)
         .fillMaxWidth(),
       verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+      Button(
+        onClick = {
+          host = TextFieldValue(initials!!.host)
+          login = initials!!.login
+          token = initials!!.token
+        },
+        modifier = Modifier.fillMaxWidth(),
+        enabled = initials != null && current != initials,
+      ) {
+        Icon(imageVector = Icons.Filled.LockReset, contentDescription = null)
+      }
       OutlinedTextField(
         value = host,
         onValueChange = { host = toIPv4Address(it) },
@@ -76,6 +88,26 @@ fun Authorization(
         onValueChange = { login = it },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Login") },
+        trailingIcon = {
+          IconButton(
+            onClick = {
+              scope.launch {
+                token = token ?: generateToken(login!!)
+                val credentials = Credentials(host.text, login!!, token!!)
+                val lastError = authorize(credentials)
+                if (lastError != null) {
+                  snackBarHostState.showSnackbar(lastError, duration = SnackbarDuration.Short)
+                } else {
+                  model.remember(credentials)
+                  onSuccess(credentials)
+                }
+              }
+            },
+            enabled = host.text.isNotBlank() && login != null,
+          ) {
+            Icon(imageVector = Icons.Filled.Login, contentDescription = null)
+          }
+        },
         keyboardOptions = KeyboardOptions(
           capitalization = KeyboardCapitalization.Words,
           autoCorrect = false,
@@ -124,45 +156,7 @@ fun Authorization(
         else VisualTransformation.None,
         singleLine = true,
       )
-      Row(
-        horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally)
-      ) {
-        Button(
-          onClick = {
-            host = TextFieldValue(initials!!.host)
-            login = initials!!.login
-            token = initials!!.token
-          },
-          modifier = Modifier
-            .weight(1f)
-            .fillMaxWidth(),
-          enabled = initials != null && current != initials,
-        ) {
-          Icon(imageVector = Icons.Filled.LockReset, contentDescription = null)
-        }
-        Button(
-          onClick = {
-            scope.launch {
-              val credentials = current!!
-              val lastError = authorize(credentials)
-              if (lastError != null) {
-                snackBarHostState.showSnackbar(lastError, duration = SnackbarDuration.Short)
-              } else {
-                model.remember(credentials)
-                onSuccess(credentials)
-              }
-            }
-          },
-          modifier = Modifier
-            .weight(1f)
-            .fillMaxWidth(),
-          enabled = current != null,
-        ) {
-          Icon(imageVector = Icons.Filled.Login, contentDescription = null)
-        }
-      }
     }
-    SnackbarHost(hostState = snackBarHostState) { Snackbar(it) }
   }
 }
 
