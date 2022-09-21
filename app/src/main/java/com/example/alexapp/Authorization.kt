@@ -166,7 +166,8 @@ fun makeCredentials(host: String?, login: String?, token: String?): Credentials?
 
 fun toIPv4Address(value: TextFieldValue): TextFieldValue {
   // TODO: coerce text into form https://<a>.<b>.<c>.<d>:<port>
-  return value
+  val fixedText = "https" + value.text.filter { it.isDigit() || setOf('.', ':', '/').contains(it) }
+  return value.copy(text = fixedText)
 }
 
 fun generateToken(
