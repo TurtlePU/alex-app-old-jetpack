@@ -3,14 +3,12 @@ package com.example.alexapp
 import Participant
 import Performance
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.paging.*
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -58,7 +56,7 @@ fun Exposition(ratings: RatingModel, driver: RatingDriver) {
     ratingTarget?.let {
       val oldRating by ratings.restore(it).collectAsState(initial = null)
       val scope = rememberCoroutineScope()
-      Evaluation(it, oldRating = oldRating, modifier = Modifier.padding(8.dp)) { newRating ->
+      Evaluation(it, oldRating = oldRating) { newRating ->
         scope.launch {
           ratings.rate(it, newRating)
           driver.rate(it, newRating)
