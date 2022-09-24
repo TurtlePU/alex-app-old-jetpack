@@ -61,17 +61,6 @@ fun Authorization(
       verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-      Button(
-        onClick = {
-          host = TextFieldValue(initials!!.host)
-          login = initials!!.login
-          token = initials!!.token
-        },
-        modifier = Modifier.fillMaxWidth(),
-        enabled = initials != null && current != initials,
-      ) {
-        Icon(imageVector = Icons.Filled.LockReset, contentDescription = null)
-      }
       OutlinedTextField(
         value = host,
         onValueChange = { host = toIPv4Address(it) },
@@ -157,6 +146,18 @@ fun Authorization(
         singleLine = true,
       )
     }
+    if (initials != null && current != initials) {
+      FloatingActionButton(
+        onClick = {
+          host = TextFieldValue(initials!!.host)
+          login = initials!!.login
+          token = initials!!.token
+        },
+        modifier = Modifier.fillMaxWidth(),
+      ) {
+        Icon(imageVector = Icons.Filled.LockReset, contentDescription = null)
+      }
+    }
   }
 }
 
@@ -165,9 +166,7 @@ fun makeCredentials(host: String?, login: String?, token: String?): Credentials?
 }
 
 fun toIPv4Address(value: TextFieldValue): TextFieldValue {
-  // TODO: coerce text into form https://<a>.<b>.<c>.<d>:<port>
-  val fixedText = "https" + value.text.filter { it.isDigit() || setOf('.', ':', '/').contains(it) }
-  return value.copy(text = fixedText)
+  return value
 }
 
 fun generateToken(
