@@ -1,5 +1,6 @@
 package com.example.alexapp
 
+import GetQueue
 import Performance
 import PostAuth
 import PostGrade
@@ -23,16 +24,23 @@ suspend fun authorize(client: HttpClient, credentials: Credentials) = try {
   e.localizedMessage
 }
 
-class NetworkRatings(private val client: HttpClient, private val credentials: Credentials) :
-  RatingDriver {
+class NetworkRatings(
+  private val client: HttpClient,
+  private val credentials: Credentials,
+  private val accumulated: MutableList<Performance>,
+) : RatingDriver {
   override val performances = Pager(PagingConfig(100)) {
     object : PagingSource<Int, Performance>() {
-      override fun getRefreshKey(state: PagingState<Int, Performance>): Int? {
-        TODO("Not yet implemented")
+      override fun getRefreshKey(state: PagingState<Int, Performance>) = state.run {
+        ((anchorPosition ?: 0) - config.initialLoadSize / 2).coerceAtLeast(0)
       }
 
       override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Performance> {
-        TODO("Not yet implemented")
+        val response: List<Performance> = client.get("${credentials.host}/queue") {
+          body = GetQueue(since = accumulated.size)
+        }
+        accumulated.addAll(response)
+        return LoadResult.Page(accumulated, null, null)
       }
     }
   }.flow

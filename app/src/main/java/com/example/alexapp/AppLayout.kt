@@ -1,6 +1,8 @@
 package com.example.alexapp
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -42,7 +44,7 @@ fun AppInject(data: DataStore<Preferences>, client: HttpClient) {
     { credentials ->
       Exposition(
         RatingPreferences(data),
-        NetworkRatings(client, credentials)
+        NetworkRatings(client, credentials, remember { mutableStateListOf() })
       )
     },
   )
