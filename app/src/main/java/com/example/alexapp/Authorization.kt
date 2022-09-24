@@ -72,28 +72,27 @@ fun Authorization(
         ),
         singleLine = true,
       )
+      val canLogin = host.text.isNotBlank() && login != null
+      val tryLogin: () -> Unit = {
+        scope.launch {
+          token = token ?: generateToken(login!!)
+          val credentials = Credentials(host.text, login!!, token!!)
+          val lastError = authorize(credentials)
+          if (lastError != null) {
+            snackBarHostState.showSnackbar(lastError, duration = SnackbarDuration.Short)
+          } else {
+            model.remember(credentials)
+            onSuccess(credentials)
+          }
+        }
+      }
       OutlinedTextField(
         value = login ?: "",
         onValueChange = { login = it },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Login") },
         trailingIcon = {
-          IconButton(
-            onClick = {
-              scope.launch {
-                token = token ?: generateToken(login!!)
-                val credentials = Credentials(host.text, login!!, token!!)
-                val lastError = authorize(credentials)
-                if (lastError != null) {
-                  snackBarHostState.showSnackbar(lastError, duration = SnackbarDuration.Short)
-                } else {
-                  model.remember(credentials)
-                  onSuccess(credentials)
-                }
-              }
-            },
-            enabled = host.text.isNotBlank() && login != null,
-          ) {
+          IconButton(onClick = tryLogin, enabled = canLogin) {
             Icon(imageVector = Icons.Filled.Login, contentDescription = null)
           }
         },
@@ -104,7 +103,7 @@ fun Authorization(
         ),
         keyboardActions = KeyboardActions(onDone = {
           defaultKeyboardAction(ImeAction.Done)
-          token = login?.let(::generateToken)
+          if (canLogin) tryLogin()
         }),
         singleLine = true,
       )
