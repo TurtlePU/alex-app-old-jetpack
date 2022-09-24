@@ -101,10 +101,10 @@ fun Authorization(
           autoCorrect = false,
           imeAction = ImeAction.Done,
         ),
-        keyboardActions = KeyboardActions(onDone = {
+        keyboardActions = KeyboardActions {
           defaultKeyboardAction(ImeAction.Done)
           if (canLogin) tryLogin()
-        }),
+        },
         singleLine = true,
       )
       var isHidden by rememberSaveable { mutableStateOf(true) }
